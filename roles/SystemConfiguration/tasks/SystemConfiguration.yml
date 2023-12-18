@@ -1,0 +1,113 @@
+---
+  - name: Disable Firewalld
+    service:
+      name: firewalld
+      state: stopped
+      enabled: no
+
+  - name: Disable selinux
+    selinux:
+      state: disabled
+
+  - name: " Enable password authentication"
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: ^PasswordAuthentication no
+      line: PasswordAuthentication yes
+      backrefs: yes
+    notify: Reload sshd
+
+  - name: Add {{ IcmpUser }} user
+    user:
+      name: "{{ IcmpUser }}"
+      comment: iServermate Admin user
+      state: present
+      password: "{{ 'password' | password_hash('sha256') }}"
+
+  - name: Set root user password
+    user:
+      name: root
+      password: "{{ 'password' | password_hash('sha256') }}"
+      state: present
+
+  - name: Copy ssh key to iservermate user home directory
+    authorized_key:
+      user: "{{ IcmpUser }}"
+      state: present
+      key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      manage_dir: yes
+
+  - name: Validate the sudoers file before saving
+    ansible.builtin.lineinfile:
+      path: /etc/sudoers
+      state: present
+      line: "{{ IcmpUser }} ALL=(ALL) NOPASSWD: ALL"
+      backup: yes
+      validate: /usr/sbin/visudo -cf %s
+
+  # - name: Set MOTD
+  #   copy:
+  #     content: Welcome to iServermate "{{ inventory_hostname }}" Server\n
+  #     dest: /etc/motd
+
+  - name: Update /etc/hosts files on each node
+    lineinfile:
+      dest: /etc/hosts
+      regexp: '.*{{ item }}$'
+      line: "{{ hostvars[item].ansible_host }} {{item}}"
+      state: present
+    when: hostvars[item].ansible_host is defined
+    with_items: "{{ groups.all }}"
+
+  - name: Uninstall epel-repo
+    yum:
+      name: epel-release
+      state: absent
+
+  - name: Install epel-repo
+    yum:
+      name: epel-release
+      state: present
+      update_cache: true
+
+  - name: Upgrade all packages
+    ansible.builtin.yum:
+      name: "*"
+      state: latest
+      update_cache: true
+    register: yum_update
+
+  - name: Install packages
+    yum:
+      name:
+        - yum-utils
+        - rsync
+        - python3-pip
+        - python3-pexpect
+        - openssl
+        - openssl-devel 
+        - python3-cryptography
+        - python3-pyOpenSSL
+      state: latest
+
+  # - name: Check if a reboot is needed on all servers
+  #   register: reboot_required_file
+  #   stat: path=/var/run/reboot-required get_md5=no
+
+  # - name: Reboot the box if kernel updated
+  #   reboot:
+  #     msg: Reboot initiated by Ansible for kernel updates
+  #     connect_timeout: 5
+  #     reboot_timeout: 300
+  #     pre_reboot_delay: 0
+  #     post_reboot_delay: 30
+  #     test_command: uptime
+
+  - name: See if Linux instance needs a reboot
+    ansible.builtin.command: needs-restarting -r
+    register: reg_reboot_required
+    ignore_errors: true
+    failed_when: false
+    changed_when: reg_reboot_required.rc != 0
+    notify:
+        - RebootServer
