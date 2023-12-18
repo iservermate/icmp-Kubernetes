@@ -1,0 +1,9 @@
+---
+  - hosts: localhost
+    gather_facts: off
+    tasks:
+      - name: "Create Vagrantfile"
+        template:
+          src: Vagrantfile.j2
+          dest: Vagrantfile
+          mode: '0755'

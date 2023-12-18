@@ -1,0 +1,15 @@
+---
+# handlers file for roles/SystemConfiguration
+
+  - name: "Reload SShd service"
+    service:
+      name: sshd
+      state: reloaded
+      enabled: yes
+    listen: "Reload sshd"
+  
+  - name: RebootServer
+    ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible after Linux kernel update"
+        reboot_timeout: 3600
+        test_command: w  
