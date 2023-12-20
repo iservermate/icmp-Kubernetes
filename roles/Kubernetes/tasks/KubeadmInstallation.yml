@@ -1,0 +1,26 @@
+---
+  - name: Add repository
+    #ansible.builtin.get_url:
+    ansible.builtin.yum_repository:
+      name: kubernetes
+      description: Kubernetes repository
+      baseurl: https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+      gpgcheck: yes
+      gpgkey: https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+      exclude: kubeadm kubectl cri-tools kubernetes-cni
+
+  - name: Install kubeadm, kubelet and kubectl packages
+    yum:
+      name:
+        - kubeadm
+        - kubelet
+        - kubectl
+        - iproute-tc
+      state: latest
+      disable_excludes: kubernetes
+  
+  - name: Enabling kubelet service
+    service:
+      name: kubelet
+      state: started
+      enabled: yes

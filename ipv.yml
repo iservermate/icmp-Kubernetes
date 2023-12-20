@@ -1,0 +1,10 @@
+---
+  - name: get eth1 IP
+    hosts: icmp-master01
+    gather_facts: on
+
+
+    tasks:
+      - name: print eth1 ip
+        debug:
+          msg : "{{ ansible_facts['eth1']['ipv4']['address'] }}"

@@ -1,4 +1,14 @@
 MyDomain: iservermate.loal
 IcmpUser: iservermate
+
 MasterNodes: 1
 WorkerNodes: 2
+MasterHostName: icmp-master01
+
+BridgeInterface: "en0: Wi-Fi"
+IpNw: "192.168.0."
+MasterStartIp: 80
+WorkerStartIp: 81
+MasterNodeIp: 192.168.0.81
+
+PodNetworkCidr: 10.244.0.0/16

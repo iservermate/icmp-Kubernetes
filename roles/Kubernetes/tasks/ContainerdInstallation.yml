@@ -1,0 +1,44 @@
+---
+  - name: Add docker-ce repository
+    ansible.builtin.get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docker-ce.repo      
+  
+  - name: Install docker packages
+    yum:
+      name:
+        #- docker-ce 
+        #- docker-ce-cli
+        - containerd.io
+        #- docker-buildx-plugin
+        #- docker-compose-plugin
+      state: latest
+
+  - name: Starting and Enabling containerd service
+    service:
+      name: containerd
+      state: started
+      enabled: yes
+  
+  - name: Delete config.toml file 
+    file:
+      state: absent
+      path: /etc/containerd/config.toml
+    ignore_errors: true
+
+  - name: Configure systemd cgroup driver
+    lineinfile:
+      path: /etc/containerd/config.toml
+      state: present
+      line: "{{ item }}"
+      create: yes
+    with_items:
+      - '[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]'
+      - '[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]'
+      - SystemdCgroup = true
+
+  - name: Restarting containerd service
+    service:
+      name: containerd
+      state: restarted
+      enabled: yes
