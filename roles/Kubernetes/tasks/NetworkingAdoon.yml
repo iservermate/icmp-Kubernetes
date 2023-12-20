@@ -1,0 +1,49 @@
+---
+  - name: update pip3
+    shell: pip3 install -U pip    
+
+  - name: Install Required MySQL pip modules
+    pip:
+      name:
+        - kubernetes
+      state: present
+      executable: pip3
+
+#ENABLE THIS CODE IF WANT TO INSTALL Flannel POD NETWORK ADDON
+#Install  Flannel network.
+  - name: install Pod network
+    shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml --validate=false >> pod_network_setup.log
+    args:
+      chdir: $HOME
+      creates: pod_network_setup.log
+    run_once: true
+    when: ansible_hostname == MasterHostName
+
+  # #Note: Control plane node isolation - By default, your cluster will not schedule Pods on the control plane nodes for security reasons. If you want to be able to schedule Pods on the control plane nodes, for example for a single machine Kubernetes cluster, run:
+  # - name: Untaint the node
+  #   shell: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+  #   become: false
+  #   run_once: true
+  #   when: ansible_hostname == MasterHostName
+
+
+#ENABLE THIS CODE IF WANT TO INSTALL  WEAVE NET POD NETWORK ADDON 
+
+# #Install  Weave Net network.
+#   - name: Install Weave Net networking addon on master node
+#     command: kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml --validate=false
+#     become: false
+#     run_once: true
+#     when: ansible_hostname == MasterHostName
+
+#Note: If you do set the --cluster-cidr option on kube-proxy, make sure it matches the IPALLOC_RANGE given to Weave Net (see below).
+#Run this commands on Master node 
+    #kubectl get ds -AT
+    #kubectl edit ds weave-net -n kube-system
+    #Add new env: variable in running configs
+    # env:
+    #  - name: IPALLOC_RANGE
+    #    value: 10.244.0.0/16   #Change this as per your pod network cidr
+    
+
+

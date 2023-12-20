@@ -4,3 +4,4 @@
   - import_tasks: ContainerdInstallation.yml
   - import_tasks: KubeadmInstallation.yml
   - import_tasks: ClusterConfiguration.yml
+  - import_tasks: NetworkingAdoon.yml

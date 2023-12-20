@@ -6,9 +6,60 @@
 #Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network:~:text=Initializing%20your%20control,plane%20node%20run%3A
   - name: Isnitializing control-plane (Master) node
     command: kubeadm init --pod-network-cidr={{ PodNetworkCidr }} --apiserver-advertise-address={{ MasterNodeIp }}
-    when: ansible_hostname == '{{ MasterHostName }}'
+    when: ansible_hostname == MasterHostName
+    run_once: true
+    ignore_errors: true
     register: Result
-  
+
   - debug:
       msg: "{{ Result.stdout_lines }}"
-    when: ansible_hostname == '{{ MasterHostName }}'
+    when: ansible_hostname == MasterHostName
+  
+  - name: "Export /etc/kubernetes/admin.conf"
+    shell: export KUBECONFIG=/etc/kubernetes/admin.conf
+    become_user: root    
+    when: ansible_hostname == MasterHostName
+
+  # - name: Create .kube directory
+  #   ansible.builtin.file:
+  #     path: .kube
+  #     state: directory
+  #     owner: "{{ IcmpUser }}"
+  #     group: "{{ IcmpUser }}"
+  #   when: ansible_hostname == MasterHostName
+
+  # - name: Copying configuraiton file
+  #   command: cp /etc/kubernetes/admin.conf .kube/config
+  #   when: ansible_hostname == MasterHostName
+  #   run_once: true
+
+  - name: create .kube directory
+    become: true
+    become_user: "{{ IcmpUser }}"
+    file:
+      path: $HOME/.kube
+      state: directory
+      mode: 0755
+  
+  - name: copy admin.conf to user's kube config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/{{ IcmpUser }}/.kube/config
+      remote_src: yes
+      owner: "{{ IcmpUser }}"
+    when: ansible_hostname == MasterHostName
+    
+  - name: Recursively change ownership
+    ansible.builtin.file:
+      path: .kube
+      state: directory
+      owner: "{{ IcmpUser }}"
+      group: "{{ IcmpUser }}"
+      recurse: yes
+    when: ansible_hostname == MasterHostName
+
+  - debug: 
+      msg: 
+        - "(Optional) - Run this command as user, if want to enable kubectl configurations for root user"
+        - "export KUBECONFIG=/etc/kubernetes/admin.conf"
+    when: ansible_hostname == MasterHostName

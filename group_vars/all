@@ -1,14 +1,15 @@
 MyDomain: iservermate.loal
 IcmpUser: iservermate
 
-MasterNodes: 1
+MasterNodes: 1  
 WorkerNodes: 2
 MasterHostName: icmp-master01
 
-BridgeInterface: "en0: Wi-Fi"
-IpNw: "192.168.0."
-MasterStartIp: 80
-WorkerStartIp: 81
+#BridgeInterface: "en0: Wi-Fi"       #Enable for Macbook
+BridgeInterface: "en0: Ethernet"             #Enable for iMac
+IpNw: "192.168.0."                  #Servers Network portion
+MasterStartIp: 80                   #Master node Host portion to start from.
+WorkerStartIp: 81                   #Worker node Host portion to start from.
 MasterNodeIp: 192.168.0.81
 
-PodNetworkCidr: 10.244.0.0/16
+PodNetworkCidr: 10.244.0.0/16       #Network for pods

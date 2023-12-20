@@ -5,8 +5,8 @@
   - name: Disable swap permanentlly
     lineinfile:
       path: /etc/fstab
-      regexp: '^/dev/mapper/cl_centos8-swap*'
-      line: '#/dev/mapper/cl_centos8-swap*'
+      regexp: '/dev/mapper/cl_centos8-swap none                    swap    defaults        0 0'
+      line: '#/dev/mapper/cl_centos8-swap none                    swap    defaults        0 0'
 
   - name: Create file to load modules
     lineinfile:
