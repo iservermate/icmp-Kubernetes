@@ -3,9 +3,10 @@
 NUM_MASTER_NODE = {{ MasterNodes }}
 NUM_WORKER_NODE = {{ WorkerNodes }}
 
-IP_NW = "192.168.56."
-MASTER_IP_START = 1
-NODE_IP_START = 2
+#IP_NW = "192.168.0."
+IP_NW = "{{ IpNw }}"
+MASTER_IP_START = {{ MasterStartIp }}
+NODE_IP_START = {{ WorkerStartIp }}
 LB_IP_START = 30
 
 
@@ -21,13 +22,14 @@ Vagrant.configure("2") do |config|
         vb.gui = false
         vb.name = "icmp-master0#{i}"
         vb.memory = "2048"
-        vb.cpus = "1"
+        vb.cpus = "2"
       end
 
       #Either this
       node.vm.hostname = "icmp-master0#{i}"
-      node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
-      node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
+      node.vm.network :public_network, bridge: "{{ BridgeInterface }}", ip: IP_NW + "#{MASTER_IP_START + i}"
+
+      #node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
       #Or Either this
       #ds.vm.hostname = "ds.iservermate.local"
       #ds.vm.network "public_network", bridge: "eno1", ip:"192.168.0.51"
@@ -41,18 +43,19 @@ Vagrant.configure("2") do |config|
   
   #Provision worker node
   (1.. NUM_WORKER_NODE).each do |i|
-    config.vm.define "icmp-node0#{i}" do |node|
+    config.vm.define "icmp-worker0#{i}" do |node|
       node.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.name = "icmp-node0#{i}"
       vb.memory = "2048"
-      vb.cpus = "1"
+      vb.cpus = "2"
     end
 
       #Either this
-      node.vm.hostname = "icmp-node0#{i}"
-      node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
-      node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
+      node.vm.hostname = "icmp-worker0#{i}"
+      node.vm.network :public_network, bridge: "{{ BridgeInterface }}", ip: IP_NW + "#{NODE_IP_START + i}"
+
+      #node.vm.network "forwarded_port", guest: 22, host: "#{2711 + i}"
       #Or Either this
       #ds.vm.hostname = "ds.iservermate.local"
       #ds.vm.network "public_network", bridge: "eno1", ip:"192.168.0.51"

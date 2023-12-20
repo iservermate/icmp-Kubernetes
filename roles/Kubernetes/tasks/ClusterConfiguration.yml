@@ -1,0 +1,14 @@
+---
+  #Enable this task if have multi-masters nodes.
+  #- name: Configure multi-masters
+  #  command: kubeadm --control-plane-endpoint
+
+#Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network:~:text=Initializing%20your%20control,plane%20node%20run%3A
+  - name: Isnitializing control-plane (Master) node
+    command: kubeadm init --pod-network-cidr={{ PodNetworkCidr }} --apiserver-advertise-address={{ MasterNodeIp }}
+    when: ansible_hostname == '{{ MasterHostName }}'
+    register: Result
+  
+  - debug:
+      msg: "{{ Result.stdout_lines }}"
+    when: ansible_hostname == '{{ MasterHostName }}'

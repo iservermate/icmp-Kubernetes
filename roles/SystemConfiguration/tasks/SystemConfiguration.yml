@@ -45,19 +45,15 @@
       backup: yes
       validate: /usr/sbin/visudo -cf %s
 
-  # - name: Set MOTD
-  #   copy:
-  #     content: Welcome to iServermate "{{ inventory_hostname }}" Server\n
-  #     dest: /etc/motd
+  - name: Set MOTD
+    copy:
+      content: Welcome to iServermate "{{ inventory_hostname }}" Server\n
+      dest: /etc/motd
 
-  - name: Update /etc/hosts files on each node
-    lineinfile:
+  - name: "Update /etc/hosts fie"
+    template:
+      src: hosts.j2
       dest: /etc/hosts
-      regexp: '.*{{ item }}$'
-      line: "{{ hostvars[item].ansible_host }} {{item}}"
-      state: present
-    when: hostvars[item].ansible_host is defined
-    with_items: "{{ groups.all }}"
 
   - name: Uninstall epel-repo
     yum:
