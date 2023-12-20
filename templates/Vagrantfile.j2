@@ -1,13 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-NUM_MASTER_NODE = 1
-NUM_WORKER_NODE = 2
+NUM_MASTER_NODE = {{ MasterNodes }}
+NUM_WORKER_NODE = {{ WorkerNodes }}
 
 #IP_NW = "192.168.0."
 
-IP_NW = "192.168.0."
-MASTER_IP_START = 80
-NODE_IP_START = 81
+IP_NW = "{{ IpNw }}"
+MASTER_IP_START = {{ MasterStartIp }}
+NODE_IP_START = {{ WorkerStartIp }}
 LB_IP_START = 30
 
 
@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
 
       #Either this
       node.vm.hostname = "icmp-master0#{i}"
-      node.vm.network :public_network, bridge: "en0: Ethernet", ip: IP_NW + "#{MASTER_IP_START + i}"
+      node.vm.network :public_network, bridge: "{{ BridgeInterface }}", ip: IP_NW + "#{MASTER_IP_START + i}"
 
       #node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
       #Or Either this
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
 
       #Either this
       node.vm.hostname = "icmp-worker0#{i}"
-      node.vm.network :public_network, bridge: "en0: Ethernet", ip: IP_NW + "#{NODE_IP_START + i}"
+      node.vm.network :public_network, bridge: "{{ BridgeInterface }}", ip: IP_NW + "#{NODE_IP_START + i}"
 
       #node.vm.network "forwarded_port", guest: 22, host: "#{2711 + i}"
       #Or Either this
