@@ -26,3 +26,27 @@ If the minikube installation has been done on the macOS, then to access the URL 
 
 
 Newtorking Addons (Weave Net): https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+
+#Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network:~:text=Initializing%20your%20control,plane%20node%20run%3A
+
+Note: Control plane node isolation - By default, your cluster will not schedule Pods on the control plane nodes for security reasons. If you want to be able to schedule Pods on the control plane nodes, for example for a single machine Kubernetes cluster, run:
+- name: Untaint the node
+  shell: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+  become: false
+  run_once: true
+  when: 
+    - ansible_hostname == MasterHostName
+    - PodNetworkAddon == flannel
+
+
+#Note: If you do set the --cluster-cidr option on kube-proxy, make sure it matches the IPALLOC_RANGE given to Weave Net (see below).
+#Run this commands on Master node 
+  #kubectl get ds -AT
+  #kubectl edit ds weave-net -n kube-system
+  #Add new env: variable in running configs
+  # env:
+  #  - name: IPALLOC_RANGE
+  #    value: 10.244.0.0/16   #Change this as per your pod network cidr
+
+

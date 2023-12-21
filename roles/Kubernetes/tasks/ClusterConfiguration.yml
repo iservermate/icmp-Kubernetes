@@ -3,7 +3,6 @@
   #- name: Configure multi-masters
   #  command: kubeadm --control-plane-endpoint
 
-#Ref: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network:~:text=Initializing%20your%20control,plane%20node%20run%3A
   - name: Isnitializing control-plane (Master) node
     command: kubeadm init --pod-network-cidr={{ PodNetworkCidr }} --apiserver-advertise-address={{ MasterNodeIp }}
     when: ansible_hostname == MasterHostName
@@ -20,28 +19,21 @@
     become_user: root    
     when: ansible_hostname == MasterHostName
 
-  # - name: Create .kube directory
-  #   ansible.builtin.file:
-  #     path: .kube
-  #     state: directory
-  #     owner: "{{ IcmpUser }}"
-  #     group: "{{ IcmpUser }}"
-  #   when: ansible_hostname == MasterHostName
+#export KUBECONFIG=/etc/kubernetes/admin.conf
+  - name: Create .kube directory
+    ansible.builtin.file:
+      path: .kube
+      state: directory
+      owner: "{{ IcmpUser }}"
+      group: "{{ IcmpUser }}"
+    when: ansible_hostname == MasterHostName
 
   # - name: Copying configuraiton file
   #   command: cp /etc/kubernetes/admin.conf .kube/config
   #   when: ansible_hostname == MasterHostName
   #   run_once: true
 
-  - name: create .kube directory
-    become: true
-    become_user: "{{ IcmpUser }}"
-    file:
-      path: $HOME/.kube
-      state: directory
-      mode: 0755
-  
-  - name: copy admin.conf to user's kube config
+  - name: copy admin.conf to "{{ IcmpUser }}" as kube/config
     copy:
       src: /etc/kubernetes/admin.conf
       dest: /home/{{ IcmpUser }}/.kube/config

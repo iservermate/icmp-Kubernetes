@@ -12,4 +12,5 @@ MasterStartIp: 80                   #Master node Host portion to start from.
 WorkerStartIp: 81                   #Worker node Host portion to start from.
 MasterNodeIp: 192.168.0.81
 
+PodNetworkAddon: flannel            #flannel -OR- weavenet
 PodNetworkCidr: 10.244.0.0/16       #Network for pods
