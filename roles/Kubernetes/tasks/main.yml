@@ -1,7 +1,8 @@
 ---
-# tasks file for roles/Kubernetes
+#tasks file for roles/Kubernetes
   - import_tasks: ContainerRuntimePrerequisites.yml
   - import_tasks: ContainerdInstallation.yml
   - import_tasks: KubeadmInstallation.yml
   - import_tasks: ClusterConfiguration.yml
   - import_tasks: NetworkingAdoon.yml
+  - import_tasks: JoinClusterWorker.yml

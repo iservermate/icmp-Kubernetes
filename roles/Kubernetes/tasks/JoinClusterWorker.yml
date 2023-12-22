@@ -1,25 +1,23 @@
 ---
-  - name: Get command to jion
+  - name: Get command to join
     shell: kubeadm token create --print-join-command
-    #become: false
+    register: OutPut
     run_once: true
-    register: JoinCommand
-    when: inventory_hsotname == MasterHostName
+    when: inventory_hostname == MasterHostName
 
   - name: Set join command
     set_fact:
-      join_command: "{{ JoinCommand.stdout_lines[0] }}"
-    when: inventory_hsotname == MasterHostName
+      join_command: "{{ OutPut.stdout_lines[0] }}"
+    when: inventory_hostname == MasterHostName
+    run_once: true
 
-  - name: TCP port 6443 on master is reachable from worker
-    wait_for: "host={{ hostvars['k8s-master-1']['ansible_default_ipv4']['address'] }} port=6443 timeout=1"
-    when: inventory_hsotname != MasterHostName
+  - debug:
+      msg: "{{ join_command }}"
+    when: inventory_hostname == MasterHostName
 
   - name: On worker/s nodes joining cluster 
-    shell: "{{ hostvars['k8s-master-1'].join_command }} >> NodeJoined.log"
-    #become: false
-    run_once: true
+    shell: "{{ join_command }}"
     args:
-      chdir: /home/"{{ IcmpUser }}"
+      chdir: /home/{{ IcmpUser }}
       creates: NodeJoined.log
-    when: inventory_hsotname != MasterHostName
+    when: inventory_hostname != MasterHostName

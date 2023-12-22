@@ -3,7 +3,7 @@
   #- name: Configure multi-masters
   #  command: kubeadm --control-plane-endpoint
 
-  - name: Isnitializing control-plane (Master) node
+  - name: Initializing control-plane (Master) node
     command: kubeadm init --pod-network-cidr={{ PodNetworkCidr }} --apiserver-advertise-address={{ MasterNodeIp }}
     when: ansible_hostname == MasterHostName
     run_once: true
@@ -28,12 +28,7 @@
       group: "{{ IcmpUser }}"
     when: ansible_hostname == MasterHostName
 
-  # - name: Copying configuraiton file
-  #   command: cp /etc/kubernetes/admin.conf .kube/config
-  #   when: ansible_hostname == MasterHostName
-  #   run_once: true
-
-  - name: copy admin.conf to "{{ IcmpUser }}" as kube/config
+  - name: copy admin.conf to "{{ IcmpUser }}" as .kube/config
     copy:
       src: /etc/kubernetes/admin.conf
       dest: /home/{{ IcmpUser }}/.kube/config

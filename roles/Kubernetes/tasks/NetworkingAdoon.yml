@@ -2,7 +2,7 @@
   - name: update pip3
     shell: pip3 install -U pip    
 
-  - name: Install Required MySQL pip modules
+  - name: Installing Required kubenetes pip module
     pip:
       name:
         - kubernetes
@@ -27,4 +27,3 @@
     when: 
       - ansible_hostname == MasterHostName
       - PodNetworkAddon != "flannel"
-

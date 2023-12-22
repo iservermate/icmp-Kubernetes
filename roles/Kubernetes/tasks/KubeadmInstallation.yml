@@ -1,6 +1,5 @@
 ---
   - name: Add repository
-    #ansible.builtin.get_url:
     ansible.builtin.yum_repository:
       name: kubernetes
       description: Kubernetes repository
