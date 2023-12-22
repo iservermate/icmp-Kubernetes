@@ -21,3 +21,4 @@
       chdir: /home/{{ IcmpUser }}
       creates: NodeJoined.log
     when: inventory_hostname != MasterHostName
+    run_once: true
