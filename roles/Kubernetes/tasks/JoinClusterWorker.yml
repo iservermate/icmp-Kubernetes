@@ -2,7 +2,7 @@
   - name: Get command to join
     shell: kubeadm token create --print-join-command
     register: OutPut
-    run_once: true
+    #run_once: true
     when: inventory_hostname == MasterHostName
 
   - name: Set join command
@@ -21,4 +21,4 @@
       chdir: /home/{{ IcmpUser }}
       creates: NodeJoined.log
     when: inventory_hostname != MasterHostName
-    run_once: true
+    ignore_errors: true
