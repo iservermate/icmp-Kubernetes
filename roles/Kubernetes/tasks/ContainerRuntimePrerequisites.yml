@@ -1,8 +1,8 @@
 ---
-  - name: disable swapping temporarily
+  - name: Temporarily disable swap
     command: swapoff -a
 
-  - name: Disable swap permanentlly
+  - name: Permanently disable swap
     lineinfile:
       path: /etc/fstab
       regexp: '/dev/mapper/cl_centos8-swap none                    swap    defaults        0 0'

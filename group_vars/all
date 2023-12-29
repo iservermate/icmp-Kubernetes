@@ -14,4 +14,3 @@ MasterNodeIp: 192.168.0.81
 
 PodNetworkAddon: flannel            #flannel -OR- weavenet
 PodNetworkCidr: 10.244.0.0/16       #Network for pods
-# CommandToJoin: join_command

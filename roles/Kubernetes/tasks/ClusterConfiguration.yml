@@ -28,7 +28,7 @@
       group: "{{ IcmpUser }}"
     when: ansible_hostname == MasterHostName
 
-  - name: copy admin.conf to "{{ IcmpUser }}" as .kube/config
+  - name: Copy admin.conf to "{{ IcmpUser }}" as .kube/config
     copy:
       src: /etc/kubernetes/admin.conf
       dest: /home/{{ IcmpUser }}/.kube/config
@@ -47,6 +47,6 @@
 
   - debug: 
       msg: 
-        - "(Optional) - Run this command as user, if want to enable kubectl configurations for root user"
+        - "(Optional) - Run this command as root user, if want to enable kubectl configurations for root user"
         - "export KUBECONFIG=/etc/kubernetes/admin.conf"
     when: ansible_hostname == MasterHostName

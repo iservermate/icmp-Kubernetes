@@ -1,5 +1,5 @@
 ---
-  - name: update pip3
+  - name: Update pip3
     shell: pip3 install -U pip    
 
   - name: Installing Required kubenetes pip module
@@ -9,7 +9,7 @@
       state: present
       executable: pip3
 
-  - name: install Flannel networking addon on master node
+  - name: Install Flannel networking addon on master node
     shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml --validate=false >> PodNetworkSetup.log
     args:
       chdir: $HOME

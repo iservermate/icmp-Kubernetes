@@ -2,8 +2,8 @@
   - name: Get command to join
     shell: kubeadm token create --print-join-command
     register: OutPut
-    run_once: true
     when: inventory_hostname == MasterHostName
+    run_once: true
 
   - name: Set join command
     set_fact:
