@@ -3,7 +3,7 @@
     shell: kubeadm token create --print-join-command
     register: OutPut
     #run_once: true
-    when: inventory_hostname == MasterHostName
+    when: _hostname == MasterHostName
 
   - name: Set join command
     set_fact:

@@ -1,3 +1,5 @@
+127.0.0.1   localhost {{ inventory_hostname }}
+
 {% for host in ansible_play_batch -%}
 {% if 'ansible_eth1' in hostvars[host] -%}
 {{ hostvars[host]['ansible_facts']['eth1']['ipv4']['address'] }} {{ host }}.{{ MyDomain }} {{ host }}
