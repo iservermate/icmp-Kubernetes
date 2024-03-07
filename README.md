@@ -45,8 +45,4 @@ Note: Control plane node isolation - By default, your cluster will not schedule 
   #kubectl get ds -AT
   #kubectl edit ds weave-net -n kube-system
   #Add new env: variable in running configs
-  # env:
-  #  - name: IPALLOC_RANGE
-  #    value: 10.244.0.0/16   #Change this as per your pod network cidr
-
 
