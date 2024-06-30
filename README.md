@@ -48,6 +48,9 @@ Note: Control plane node isolation - By default, your cluster will not schedule 
 
 #If facing this below error run this command **"$ KUBECONFIG=$HOME/.kube/config"**
 
+**Error:**
   root@icmp-master01 ~]# kubectl get pods -A
   E0630 20:10:29.495216   23564 memcache.go:265] couldn't get current server API group list: Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused
-  
+
+**Fix:** 
+  KUBECONFIG=$HOME/.kube/config
